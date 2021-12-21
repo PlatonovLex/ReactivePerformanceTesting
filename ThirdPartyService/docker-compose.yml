@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  third-party:
+    image: "ksaker/third-party-service:0.0.1-SNAPSHOT"
+    environment:
+      - "JAVA_TOOL_OPTIONS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9010 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname='localhost'"
+      - "JAVA_OPTS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9010 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9010 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname='localhost'"
+    ports:
+      - "8081:8081"
+      - "9010:9010"
+  reactive:
+    image: "ksaker/reactive-service:0.0.1-SNAPSHOT"
+    environment:
+      - "JAVA_TOOL_OPTIONS=-Dhttp.client.url=http://third-party:8081 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9011 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9011 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname='localhost'"
+    #    deploy:
+    #      resources:
+    #        limits:
+    #          cpus: '0.5'
+    #          memory: 500M
+    depends_on:
+      - third-party
+    ports:
+      - "8080:8080"
+      - "9011:9011"
+
+  blocking:
+    image: "ksaker/blocking-service:0.0.1-SNAPSHOT"
+    environment:
+      - "JAVA_TOOL_OPTIONS=-Xmx2G -Xms1G -Dhttp.client.url=http://third-party:8081 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9012 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9012 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname='localhost'"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.01'
+          memory: 2.5G
+        reservations:
+          cpus: '0.01'
+          memory: 2.5G
+    depends_on:
+      - third-party
+    ports:
+      - "8083:8083"
+      - "9012:9012"
