@@ -10,7 +10,7 @@
     </parent>
     <groupId>ru.platonov.reactive</groupId>
     <artifactId>reactive-service</artifactId>
-    <version>0.0.3-SNAPSHOT</version>
+    <version>0.0.7-SNAPSHOT</version>
     <name>reactive-service</name>
     <description>Demo project for Spring Boot</description>
     <properties>

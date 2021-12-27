@@ -37,8 +37,16 @@ public class ProxyController {
         );
     }
 
+    @GetMapping(value = "/getTest")
+    public String proxy(@RequestParam long delay) throws ExecutionException, InterruptedException {
+        return restTemplate.getForObject(
+                new StringBuilder().append(url).append("/getTest?delay=").append(delay).toString(),
+                String.class
+        );
+    }
+
     @GetMapping(value = "/logic/sync")
-    public ResponseEntity<String> syncLogic (@RequestParam int length, @RequestParam int iteration) {
+    public ResponseEntity<String> syncLogic(@RequestParam int length, @RequestParam int iteration) {
         calculations(length, iteration);
         return ResponseEntity.ok("Calculation finished");
     }
@@ -46,7 +54,12 @@ public class ProxyController {
     @GetMapping(value = "/logic/syncandrequest")
     public ResponseEntity<String> syncLogicAndRequest (@RequestParam int length, @RequestParam int iteration, @RequestParam long delay) {
         restTemplate.getForObject(
-                new StringBuilder().append(url).append("/getTest?delay=").append(delay).toString(),
+                new StringBuilder()
+                        .append(url)
+                        .append("/logic/syncandrequest?length=").append(length)
+                        .append("&iteration=").append(iteration)
+                        .append("&delay=").append(delay)
+                        .toString(),
                 String.class
         );
         calculations(length, iteration);

@@ -24,4 +24,14 @@ public class ProxyController {
     public Mono<String> getUserSync(@RequestParam long delay) throws InterruptedException {
         return Mono.just("OLOLO-USER").delayElement(Duration.ofMillis(delay));
     }
+
+    @GetMapping(value = "/logic/asyncandrequest")
+    public Mono<String> asyncLogicAndRequest (@RequestParam int length, @RequestParam int iteration, @RequestParam long delay) throws InterruptedException {
+        return Mono.just("OLOLO-USER").delayElement(Duration.ofMillis(delay));
+    }
+
+    @GetMapping(value = "/logic/syncandrequest")
+    public Mono<String> syncLogicAndRequest (@RequestParam int length, @RequestParam int iteration, @RequestParam long delay) throws InterruptedException {
+        return Mono.just("OLOLO-USER").delayElement(Duration.ofMillis(delay));
+    }
 }

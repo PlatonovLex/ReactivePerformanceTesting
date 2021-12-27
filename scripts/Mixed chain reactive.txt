@@ -1,0 +1,32 @@
+Mixed 
+1 Reactive 
+2 Blocking 
+3 Reactive
+4 Blocking
+5 Third party
+
+docker container run \
+--name docker-reactive-0 -p 8080:8080 -p 9019:9019 --cpus=1 --memory=1G -d --rm \
+--env="JAVA_TOOL_OPTIONS=-Xmx1G -Xms1G -Dhttp.client.url=http://blocking-service-1:8083 -Dserver.port=8080 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9019 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9019 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname='localhost'" \
+--network thirdpartyservice_default \
+ksaker/reactive-service:0.0.7-SNAPSHOT &\ 
+docker container run \
+--name blocking-service-1 -p 8083:8083 -p 9016:9016 --cpus=1 --memory=1G -d --rm \
+--env="JAVA_TOOL_OPTIONS=-Xmx1G -Xms1G -Dhttp.client.url=http://docker-reactive-2:8084 -Dserver.tomcat.threads.max=450 -Dhttp.client.default=true -Dhttp.client.connection.max=20 -Dhttp.client.connection.max.per.route=2 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9016 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9016 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname='localhost'" \
+--network thirdpartyservice_default \
+ksaker/blocking-service:0.0.11-SNAPSHOT &\
+docker container run \
+--name docker-reactive-2 -p 8084:8084 -p 9017:9017 --cpus=1 --memory=1G -d --rm \
+--env="JAVA_TOOL_OPTIONS=-Xmx1G -Xms1G -Dhttp.client.url=http://blocking-service-3:8085 -Dserver.port=8084 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9017 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9017 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname='localhost'" \
+--network thirdpartyservice_default \
+ksaker/reactive-service:0.0.7-SNAPSHOT &\
+docker container run \
+--name blocking-service-3 -p 8085:8085 -p 9018:9018 --cpus=1 --memory=1G -d --rm \
+--env="JAVA_TOOL_OPTIONS=-Xmx1G -Xms1G -Dhttp.client.url=http://third-party:8087  -Dserver.port=8085 -Dserver.tomcat.threads.max=450 -Dhttp.client.default=true -Dhttp.client.connection.max=20 -Dhttp.client.connection.max.per.route=2 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9018 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9018 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname='localhost'" \
+--network thirdpartyservice_default \
+ksaker/blocking-service:0.0.11-SNAPSHOT &\
+docker container run \
+--name third-party -p 8087:8087 -p 9020:9020 -d --rm \
+--env="JAVA_TOOL_OPTIONS=-Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=9020 -Dserver.port=8087 -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.rmi.port=9020 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname='localhost'" \
+--network thirdpartyservice_default \
+ksaker/third-party-service:0.0.4-SNAPSHOT

@@ -34,6 +34,12 @@ public class ProxyController {
                         .bodyToMono(String.class);
     }
 
+    @GetMapping(value = "/getTest")
+    public Mono<String> proxy(@RequestParam long delay) {
+        return webClient.get().uri("/getTest?delay={delay}", delay)
+                .retrieve()
+                .bodyToMono(String.class);
+    }
 
     @GetMapping(value = "/logic/async")
     public Mono<String> asyncLogic(@RequestParam int length, @RequestParam int iteration) {
@@ -46,7 +52,8 @@ public class ProxyController {
 
     @GetMapping(value = "/logic/asyncandrequest")
     public Mono<String> asyncLogicAndRequest (@RequestParam int length, @RequestParam int iteration, @RequestParam long delay) {
-        return webClient.get().uri("/getTest?delay={delay}", delay)
+        return webClient.get().uri("/logic/asyncandrequest?length={length}&iteration={iteration}&delay={delay}",
+                length, iteration, delay)
                         .retrieve()
                         .bodyToMono(String.class)
                         .map(e -> {
